@@ -1,0 +1,22 @@
+# NetBeans / Java Web
+nbproject/private/
+build/
+dist/
+nbbuild/
+*.class
+*.log
+*.war
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+
+# Maven / Gradle
+target/
+out/
+
+# Tạm, tải lên
+lib/
+uploads/
