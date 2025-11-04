@@ -60,74 +60,95 @@ public class CartServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+    
+
+    // 👉 Hiển thị giỏ hàng
     @Override
-   
-protected void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-    // Lấy session và giỏ hàng (nếu có)
-    HttpSession session = request.getSession();
-    Map<Integer, CartItem> cart = (Map<Integer, CartItem>) session.getAttribute("cart");
-    if (cart == null) {
-        cart = new LinkedHashMap<>();
-        session.setAttribute("cart", cart);
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        HttpSession session = request.getSession();
+        Map<Integer, CartItem> cart = (Map<Integer, CartItem>) session.getAttribute("cart");
+
+        if (cart == null) {
+            cart = new LinkedHashMap<>();
+            session.setAttribute("cart", cart);
+        }
+
+        request.setAttribute("cart", cart);
+        request.getRequestDispatcher("cart.jsp").forward(request, response);
     }
 
-    // Gửi giỏ hàng qua trang JSP để hiển thị
-    request.setAttribute("cartItems", cart);
-    request.getRequestDispatcher("cart.jsp").forward(request, response);
-}
-
-
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+    // 👉 Xử lý thêm, cập nhật, xoá sản phẩm
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-       String action = request.getParameter("action"); // add, update, remove, checkout
+
+        request.setCharacterEncoding("UTF-8");
+        String action = request.getParameter("action"); // add, update, remove
+
         HttpSession session = request.getSession();
         Map<Integer, CartItem> cart = (Map<Integer, CartItem>) session.getAttribute("cart");
-        if(cart==null){ cart = new LinkedHashMap<>(); session.setAttribute("cart", cart); }
+        if (cart == null) {
+            cart = new LinkedHashMap<>();
+            session.setAttribute("cart", cart);
+        }
 
-        if("add".equals(action)){
-            int ma = Integer.parseInt(request.getParameter("maSP"));
-            int qty = Integer.parseInt(request.getParameter("qty")==null?"1":request.getParameter("qty"));
-            SanPhamDAO dao = new SanPhamDAO();
-            SanPham sp = dao.findById(ma);
-            if(sp!=null){
-                if(cart.containsKey(ma)){
-                    CartItem ci = cart.get(ma);
-                    ci.setQuantity(ci.getQuantity() + qty);
-                } else {
-                    cart.put(ma, new CartItem(sp, qty));
+        SanPhamDAO dao = new SanPhamDAO();
+
+        try {
+            if ("add".equals(action)) {
+                int ma = Integer.parseInt(request.getParameter("maSP"));
+                int qty = 1; // mặc định 1 nếu không truyền
+
+                if (request.getParameter("qty") != null) {
+                    qty = Integer.parseInt(request.getParameter("qty"));
                 }
-            }
-            response.sendRedirect("giohang.jsp");
-            return;
-        } else if("remove".equals(action)){
-            int ma = Integer.parseInt(request.getParameter("maSP"));
-            cart.remove(ma);
-            response.sendRedirect("giohang.jsp");
-            return;
-        } else if("update".equals(action)){
-            String[] ids = request.getParameterValues("maSP");
-            if(ids!=null){
-                for(String id: ids){
-                    int ma = Integer.parseInt(id);
-                    int q = Integer.parseInt(request.getParameter("qty_"+ma));
-                    if(q<=0) cart.remove(ma);
-                    else cart.get(ma).setQuantity(q);
+
+                SanPham sp = dao.findById(ma);
+                if (sp != null) {
+                    if (cart.containsKey(ma)) {
+                        CartItem ci = cart.get(ma);
+                        ci.setQuantity(ci.getQuantity() + qty);
+                    } else {
+                        cart.put(ma, new CartItem(sp, qty));
+                    }
                 }
+
+                // Sau khi thêm, quay lại giỏ hàng
+               response.sendRedirect(request.getContextPath() + "/cart");
+
+                return;
+
+            } else if ("remove".equals(action)) {
+                int ma = Integer.parseInt(request.getParameter("maSP"));
+                cart.remove(ma);
+                response.sendRedirect("cart");
+                return;
+
+            } else if ("update".equals(action)) {
+                String[] ids = request.getParameterValues("maSP");
+                if (ids != null) {
+                    for (String id : ids) {
+                        int ma = Integer.parseInt(id);
+                        int q = Integer.parseInt(request.getParameter("qty_" + ma));
+                        if (q <= 0) {
+                            cart.remove(ma);
+                        } else if (cart.containsKey(ma)) {
+                            cart.get(ma).setQuantity(q);
+                        }
+                    }
+                }
+               response.sendRedirect(request.getContextPath() + "/cart");
+
+                return;
             }
-            response.sendRedirect("giohang.jsp");
-            return;
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect("error.jsp");
         }
     }
+
 
     /**
      * Returns a short description of the servlet.

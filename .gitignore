@@ -18,5 +18,8 @@ target/
 out/
 
 # Tạm, tải lên
-lib/
+# Bỏ qua lib ở thư mục gốc, nhưng không bỏ qua WEB-INF/lib
+/lib/
+!/web/WEB-INF/lib/
+
 uploads/

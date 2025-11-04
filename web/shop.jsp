@@ -85,9 +85,16 @@
 
           <div class="shop_left1_inner2 position-absolute w-100 h-100 bg_back top-0 text-center">
             <h5>
-              <a class="button px-3" href="cart.jsp?add=${x.maSP}">
-                Thêm vào giỏ hàng <i class="fa fa-long-arrow-right ms-2"></i>
-              </a>
+             <form action="${pageContext.request.contextPath}/cart" method="post" style="display:inline;">
+    <input type="hidden" name="action" value="add">
+    <input type="hidden" name="maSP" value="${x.maSP}">
+    <input type="hidden" name="qty" value="1">
+    <button type="submit" class="button px-3">
+        Thêm vào giỏ hàng <i class="fa fa-long-arrow-right ms-2"></i>
+    </button>
+</form>
+
+
             </h5>
           </div>
         </div>
