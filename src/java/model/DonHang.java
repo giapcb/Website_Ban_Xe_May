@@ -5,67 +5,77 @@
 package model;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  *
  * @author Asus TUF
  */
 public class DonHang {
-    private int Ma_DH;
-    private int Ma_ND;
-    private Date Ngay_Dat;
-    private double Tong_Tien;
-    private String Trang_Thai;
+    private int MaDH;
+    private int MaND;
+    private Date NgayDat;
+    private double TongTien;
+    private String TrangThai;
+    private List<ChiTietDonHang> chiTiet;
 
     public DonHang() {
     }
 
-    public DonHang(int Ma_DH, int Ma_ND, Date Ngay_Dat, double Tong_Tien, String Trang_Thai) {
-        this.Ma_DH = Ma_DH;
-        this.Ma_ND = Ma_ND;
-        this.Ngay_Dat = Ngay_Dat;
-        this.Tong_Tien = Tong_Tien;
-        this.Trang_Thai = Trang_Thai;
+    public DonHang(int MaDH, int MaND, Date NgayDat, double TongTien, String TrangThai) {
+        this.MaDH = MaDH;
+        this.MaND = MaND;
+        this.NgayDat = NgayDat;
+        this.TongTien = TongTien;
+        this.TrangThai = TrangThai;
     }
 
-    public int getMa_DH() {
-        return Ma_DH;
+    public int getMaDH() {
+        return MaDH;
     }
 
-    public void setMa_DH(int Ma_DH) {
-        this.Ma_DH = Ma_DH;
+    public void setMaDH(int MaDH) {
+        this.MaDH = MaDH;
     }
 
-    public int getMa_ND() {
-        return Ma_ND;
+    public int getMaND() {
+        return MaND;
     }
 
-    public void setMa_ND(int Ma_ND) {
-        this.Ma_ND = Ma_ND;
+    public void setMaND(int MaND) {
+        this.MaND = MaND;
     }
 
-    public Date getNgay_Dat() {
-        return Ngay_Dat;
+    public Date getNgayDat() {
+        return NgayDat;
     }
 
-    public void setNgay_Dat(Date Ngay_Dat) {
-        this.Ngay_Dat = Ngay_Dat;
+    public void setNgayDat(Date NgayDat) {
+        this.NgayDat = NgayDat;
     }
 
-    public double getTong_Tien() {
-        return Tong_Tien;
+    public double getTongTien() {
+        return TongTien;
     }
 
-    public void setTong_Tien(double Tong_Tien) {
-        this.Tong_Tien = Tong_Tien;
+    public void setTongTien(double TongTien) {
+        this.TongTien = TongTien;
     }
 
-    public String getTrang_Thai() {
-        return Trang_Thai;
+    public String getTrangThai() {
+        return TrangThai;
     }
 
-    public void setTrang_Thai(String Trang_Thai) {
-        this.Trang_Thai = Trang_Thai;
+    public void setTrangThai(String TrangThai) {
+        this.TrangThai = TrangThai;
+    }
+
+    public List<ChiTietDonHang> getChiTiet() {
+        return chiTiet;
+    }
+
+    public void setChiTiet(List<ChiTietDonHang> chiTiet) {
+        this.chiTiet = chiTiet;
     }
     
 }

@@ -85,4 +85,50 @@ public class NguoiDungDAO {
         }
         return null;
     }
+    public boolean updateProfile(NguoiDung u) {
+        String sql = "UPDATE nguoidung SET HoTen = ?, SDT = ?, Diachi = ? WHERE MaND = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, u.getHoTen());
+            ps.setString(2, u.getSDT());
+            ps.setString(3, u.getDiaChi());
+            ps.setInt(4, u.getMaND()); // Rất quan trọng: Xác định người dùng cần cập nhật
+
+            int rows = ps.executeUpdate();
+            return rows > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Lỗi khi cập nhật hồ sơ người dùng: " + e.getMessage());
+        }
+        return false;
+    }
+    
+    // Phương thức này có thể được sử dụng để lấy thông tin người dùng theo ID
+    public NguoiDung getProfileById(int maND) {
+        String sql = "SELECT * FROM nguoidung WHERE MaND = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, maND);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    NguoiDung u = new NguoiDung();
+                    u.setMaND(rs.getInt("MaND"));
+                    u.setHoTen(rs.getString("HoTen"));
+                    u.setTenDN(rs.getString("TenDN"));
+                    u.setMatKhau(rs.getString("MatKhau")); // Có thể không cần MatKhau
+                    u.setEmail(rs.getString("Email"));
+                    u.setSDT(rs.getString("SDT"));
+                    u.setDiaChi(rs.getString("Diachi"));
+                    return u;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
+

@@ -1,126 +1,170 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<%@ page import="model.NguoiDung" %>
-<html lang="en">
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<html lang="vi">
+
 <jsp:include page="header.jsp" />
 
-
-<%
-    NguoiDung nd = (NguoiDung) request.getAttribute("nd");
-    String ho = "";
-    String ten = "";
-
-    if (nd != null && nd.getHoTen() != null) {
-        String[] parts = nd.getHoTen().split(" ", 2);
-        ho = parts[0];
-        ten = parts.length > 1 ? parts[1] : "";
+<style>
+    /* Custom CSS cho giao diện xịn hơn */
+    .premium-card {
+        border-radius: 12px;
+        transition: all 0.2s ease-in-out;
+        border: 1px solid rgba(0, 0, 0, 0.05); /* Viền cực nhẹ */
     }
-%>
+    .premium-card:hover {
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05); /* Bóng đổ tinh tế */
+    }
+    .form-control-pro:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.1rem rgba(0, 123, 255, 0.25);
+    }
+    .list-item-product {
+        border-bottom: 1px dashed rgba(0, 0, 0, 0.1); /* Viền chấm chấm cho sản phẩm */
+    }
+    .payment-option:hover {
+        background-color: #e9ecef !important;
+        cursor: pointer;
+    }
+</style>
 
-<!-- ================= BANNER ================= -->
-<section id="center" class="center_check"
-	style="background-image: url('image/rsz_vinfast_banner_1920x1280.jpg');
-	background-position: center center;
-	background-size: cover;
-	background-repeat: no-repeat;">
-	<div class="center_om bg_back">
-		<div class="container-xl">
-			<div class="row center_o1">
-				<div class="col-md-12">
-					<h1 class="text-white font_60">Thanh Toán</h1>
-					<h6 class="col_red mb-0">
-						<a class="text-light" href="index.jsp">TRANG CHỦ</a>
-						<span class="mx-2 text-white-50">/</span> Thanh Toán
-					</h6>
-				</div>
-			</div>
-		</div>
-	</div>
+<section id="checkout-banner" style="background-color: #f8f9fa; padding: 60px 0;">
+    <div class="container text-center text-dark">
+        <h1 class="display-5 fw-bolder mb-1">Xác Nhận Đơn Hàng & Thanh Toán</h1>
+        <p class="text-muted">
+            <a class="text-secondary text-decoration-none" href="index.jsp">TRANG CHỦ</a> 
+            <span class="mx-2">/</span> THANH TOÁN
+        </p>
+    </div>
 </section>
 
-<!-- ================= CHECKOUT FORM ================= -->
-<section id="checkout" class="pt-5 pb-5">
-	<div class="container-xl">
-		<div class="checkout_1 row">
+<section id="checkout" class="py-5">
+    <div class="container">
+        <form action="checkout" method="post" accept-charset="UTF-8">
+            <div class="row g-5">
 
-			<!-- Form bên trái -->
-			<div class="col-md-8">
-				<form action="Checkout" method="post">
-					<div class="checkout_1l">
-						<h5>Hoàn Tất Thanh Toán</h5>
-						<p>Vui lòng kiểm tra thông tin của bạn trước khi đặt hàng</p>
-					</div>
+                <div class="col-lg-7">
+                    
+                    <div class="card shadow-sm premium-card p-5 mb-5 border-0">
+                        <h4 class="mb-4 pb-3 border-bottom text-primary fw-bold d-flex align-items-center">
+                            <i class="bi bi-geo-alt-fill me-2 fs-5"></i> 1. Chi tiết giao hàng
+                        </h4>
+                        
+                        <div class="alert alert-primary p-2 mb-4 small" role="alert">
+                           <i class="bi bi-info-circle-fill me-1"></i> Vui lòng điền chính xác thông tin để đơn hàng được giao nhanh nhất.
+                        </div>
 
-					<div class="checkout_1l1 row">
-						<input class="form-control" type="text" name="ho" value="<%= ho %>" required>
-<input class="form-control" type="text" name="ten" value="<%= ten %>" required>
-<input class="form-control" type="email" name="email" value="<%= nd != null ? nd.getEmail() : "" %>" required>
-<input class="form-control" type="text" name="sdt" value="<%= nd != null ? nd.getSDT() : "" %>" required>
-<input class="form-control" type="text" name="diaChi" value="<%= nd != null ? nd.getDiaChi() : "" %>" required>
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label for="hoInput" class="form-label fw-semibold">Họ <span class="text-danger">*</span></label> 
+                                <input type="text" name="ho" class="form-control form-control-lg form-control-pro" id="hoInput" placeholder="Họ của bạn"
+                                    value="${requestScope.ho != null ? requestScope.ho : ''}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="tenInput" class="form-label fw-semibold">Tên <span class="text-danger">*</span></label>
+                                <input type="text" name="ten" class="form-control form-control-lg form-control-pro" id="tenInput" placeholder="Tên của bạn"
+                                    value="${requestScope.ten != null ? requestScope.ten : ''}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="emailInput" class="form-label fw-semibold">Email <span class="text-danger">*</span></label>
+                                <input type="email" name="email" class="form-control form-control-lg form-control-pro" id="emailInput" placeholder="Địa chỉ email"
+                                    value="${nd != null ? nd.email : ''}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="sdtInput" class="form-label fw-semibold">Số điện thoại <span class="text-danger">*</span></label>
+                                <input type="tel" name="sdt" class="form-control form-control-lg form-control-pro" id="sdtInput" placeholder="Số điện thoại liên hệ"
+                                    value="${nd != null ? nd.SDT : ''}" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="diaChiInput" class="form-label fw-semibold">Địa chỉ nhận hàng chi tiết <span class="text-danger">*</span></label>
+                                <input type="text" name="diaChi" class="form-control form-control-lg form-control-pro" id="diaChiInput" placeholder="Số nhà, Tên đường, Phường/Xã, Quận/Huyện, Tỉnh/Thành phố"
+                                    value="${nd != null ? nd.diaChi : ''}" required>
+                            </div>
+                        </div>
 
-					</div>
+                        <div class="mt-4 pt-3 border-top text-center">
+                            <small class="text-muted">
+                                <i class="bi bi-person-circle"></i> Đã có tài khoản? <a href="login.jsp" class="text-decoration-none fw-bold text-success">Đăng nhập</a> 
+                            </small>
+                        </div>
+                    </div>
+                    
+                    <div class="card shadow-sm premium-card p-5 mb-4 border-0">
+                        <h4 class="mb-4 pb-3 border-bottom text-primary fw-bold d-flex align-items-center">
+                            <i class="bi bi-credit-card-fill me-2 fs-5"></i> 3. Phương thức thanh toán
+                        </h4>
 
-					<div class="checkout_1l1 row">
-						<div class="col-md-12 ps-0">
-							<h6>Địa Chỉ Nhận Hàng <span>*</span></h6>
-							<input class="form-control" type="text" name="diaChi" value="<%= nd.getDiaChi() %>" required>
-						</div>
-					</div>
+                        <div class="form-check mb-3 p-3 border rounded-3 payment-option" onclick="document.getElementById('paymentCOD').checked = true;">
+                            <input class="form-check-input mt-2" type="radio" name="paymentMethod" id="paymentCOD" value="COD" required checked>
+                            <label class="form-check-label fw-bold ms-2" for="paymentCOD">
+                                Thanh toán khi nhận hàng (COD)
+                                <span class="badge bg-secondary-subtle text-secondary ms-2">Phổ biến</span>
+                            </label>
+                            <div class="text-muted small ps-4 mt-1">
+                                <i class="bi bi-truck-flatbed"></i> Kiểm tra hàng và trả tiền mặt/chuyển khoản cho nhân viên giao hàng.
+                            </div>
+                        </div>
+                        
+                        <div class="form-check mb-4 p-3 border rounded-3 payment-option" onclick="document.getElementById('paymentWallet').checked = true;">
+                            <input class="form-check-input mt-2" type="radio" name="paymentMethod" id="paymentWallet" value="Wallet">
+                            <label class="form-check-label fw-bold ms-2 text-primary" for="paymentWallet">
+                                Thanh toán qua Ví điện tử
+                            </label>
+                            <div class="text-muted small ps-4 mt-1">
+                                <i class="bi bi-wallet2"></i> Kết nối an toàn với MoMo, ZaloPay, ViettelPay. Phí giao dịch có thể áp dụng.
+                            </div>
+                        </div>
+                    </div>
 
-					<div class="checkout_1l mt-3">
-						<div class="form-check">
-							<label class="form-check-label">
-								<a href="signup.jsp">Tạo tài khoản mới?</a>
-							</label>
-						</div>
-					</div>
-			</div>
+                </div>
 
-			<!-- Bảng tổng tiền bên phải -->
-			<div class="col-md-4">
-				<div class="checkout_1r">
-					<h5 class="border_thick ps-3 mb-4">Tổng tiền đơn hàng</h5>
+                <div class="col-lg-5">
+                    <div class="sticky-top" style="top: 20px;"> 
+                        <div class="card shadow-lg premium-card p-4 border-0">
+                            <h4 class="mb-4 pb-3 border-bottom text-dark fw-bold d-flex align-items-center">
+                                <i class="bi bi-box-seam-fill me-2 fs-5"></i> 2. Đơn hàng của bạn
+                            </h4>
 
-					<c:if test="${not empty cartItems}">
-						<c:forEach var="item" items="${cartItems}">
-							<h6>${item.tenSp} <span class="pull-right">${item.gia}₫</span></h6>
-						</c:forEach>
-					</c:if>
+                            <ul class="list-group list-group-flush mb-3">
+                                <c:if test="${not empty cartItems}">
+                                    <c:forEach var="item" items="${cartItems}">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3 list-item-product">
+                                            <div class="me-2 text-dark">
+                                                <div class="fw-semibold">${item.sanPham.tenSp}</div>
+                                                <small class="text-muted">x ${item.quantity}</small>
+                                            </div>
+                                            <span class="fw-bold text-nowrap text-end">
+                                                <fmt:formatNumber value="${item.sanPham.gia * item.quantity}" type="number" groupingUsed="true"/>₫
+                                            </span>
+                                        </li>
+                                    </c:forEach>
+                                </c:if>
+                            </ul>
 
-					<hr>
-					<h6 class="fw-bold font_13">
-						Tổng cộng
-						<span class="pull-right text-danger fw-bold">
-							${tongTien}₫
-						</span>
-					</h6><br>
+                            <div class="d-flex justify-content-between fw-bolder mt-3 mb-4 p-3 rounded-3 bg-light">
+                                <span class="h5 mb-0 text-dark text-uppercase">TỔNG CỘNG</span>
+                                <span class="h3 mb-0 text-danger">
+                                    <fmt:formatNumber value="${tongTien}" type="number" groupingUsed="true"/>₫
+                                </span>
+                            </div>
 
-					<h5 class="border_thick ps-3 mb-4">Phương thức thanh toán</h5>
-					<div class="form-check mt-2">
-						<input type="radio" class="form-check-input" id="paymentCOD" name="paymentMethod" value="COD" required>
-						<label class="form-check-label" for="paymentCOD">Thanh toán khi nhận hàng</label>
-					</div>
-					<div class="form-check mt-2">
-						<input type="radio" class="form-check-input" id="paymentWallet" name="paymentMethod" value="Wallet">
-						<label class="form-check-label" for="paymentWallet">Ví điện tử</label>
-					</div>
+                            <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold py-3 shadow-lg text-uppercase">
+                                <i class="bi bi-check-circle-fill me-2"></i> XÁC NHẬN & THANH TOÁN
+                            </button>
+                            
+                            <div class="text-center mt-3 text-muted small">
+                                <i class="bi bi-shield-lock-fill me-1 text-success"></i> Đảm bảo giao dịch an toàn và bảo mật.
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-					<h6 class="mt-3 mb-0">
-						<button type="submit" class="button d-block text-center w-100 border-0">
-							Tiến hành thanh toán
-						</button>
-					</h6>
-				</div>
-			</div>
-
-			</form>
-		</div>
-	</div>
+            </div>
+        </form>
+    </div>
 </section>
 
 <jsp:include page="footer.jsp" />
-<script src="js/bootstrap.bundle.min.js"></script>
-<script src="js/theme.min.js"></script>
 
-</body>
+<script src="js/bootstrap.bundle.min.js"></script>
 </html>

@@ -86,7 +86,12 @@
 <%
     NguoiDung user = (NguoiDung) session.getAttribute("user");
 %>
-
+<!-- Lịch sử mua hàng (chỉ hiện khi đã đăng nhập) -->
+    <% if (user != null) { %>
+        <li class="nav-item">
+            <a class="nav-link" href="order_history">Lịch sử mua hàng</a>
+        </li>
+    <% } %>
 <% if (user != null) { %>
     <!-- Khi đã đăng nhập -->
     <li class="nav-item dropdown">

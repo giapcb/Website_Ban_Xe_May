@@ -35,8 +35,8 @@ public class RegisterServlet extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
         String confirmPassword = request.getParameter("confirmPassword");
-         String sdt = request.getParameter("sdt");
-String diachi = request.getParameter("diachi");
+        String sdt = request.getParameter("sdt");
+        String diachi = request.getParameter("diachi");
         // Kiểm tra mật khẩu khớp
         if (!password.equals(confirmPassword)) {
             request.setAttribute("error", "Mật khẩu xác nhận không khớp!");
@@ -57,11 +57,11 @@ String diachi = request.getParameter("diachi");
         // Tạo đối tượng người dùng mới
         NguoiDung user = new NguoiDung();
         user.setHoTen(fullname);
-user.setEmail(email);
-user.setMatKhau(password);
-user.setTenDN(email);
-user.setSDT(sdt); // ✅ không null nữa
-user.setDiaChi(diachi);
+        user.setEmail(email);
+        user.setMatKhau(password);
+        user.setTenDN(email);
+        user.setSDT(sdt); // ✅ không null nữa
+        user.setDiaChi(diachi);
 
         boolean result = dao.register(user);
 

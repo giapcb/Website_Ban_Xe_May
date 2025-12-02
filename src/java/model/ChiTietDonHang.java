@@ -9,61 +9,103 @@ package model;
  * @author Asus TUF
  */
 public class ChiTietDonHang {
-    private int Ma_CT;
-    private int Ma_DH;
-    private int Ma_SP;
-    private int So_Luong;
-    private double Thanh_Tien;
+    private int MaCT;
+    private int MaDH;
+    private int MaSP;
+       
+    private int soLuong;
+    private double thanhTien;
+
+    // Thuộc tính hiển thị (KHÔNG map DB)
+    private String tenSP;
+    private String anhSP;
+    private String tenMau;
+    private String anhMau;
+
 
     public ChiTietDonHang() {
     }
 
-    public ChiTietDonHang(int Ma_CT, int Ma_DH, int Ma_SP, int So_Luong, double Thanh_Tien) {
-        this.Ma_CT = Ma_CT;
-        this.Ma_DH = Ma_DH;
-        this.Ma_SP = Ma_SP;
-        this.So_Luong = So_Luong;
-        this.Thanh_Tien = Thanh_Tien;
+    public ChiTietDonHang(int MaCT, int MaDH, int MaSP, int soLuong, double thanhTien) {
+        this.MaCT = MaCT;
+        this.MaDH = MaDH;
+        this.MaSP = MaSP;
+        this.soLuong = soLuong;
+        this.thanhTien = thanhTien;
     }
 
-    public int getMa_CT() {
-        return Ma_CT;
+    public int getMaCT() {
+        return MaCT;
     }
 
-    public void setMa_CT(int Ma_CT) {
-        this.Ma_CT = Ma_CT;
+    public void setMaCT(int MaCT) {
+        this.MaCT = MaCT;
     }
 
-    public int getMa_DH() {
-        return Ma_DH;
+    public int getMaDH() {
+        return MaDH;
     }
 
-    public void setMa_DH(int Ma_DH) {
-        this.Ma_DH = Ma_DH;
+    public void setMaDH(int MaDH) {
+        this.MaDH = MaDH;
     }
 
-    public int getMa_SP() {
-        return Ma_SP;
+    public int getMaSP() {
+        return MaSP;
     }
 
-    public void setMa_SP(int Ma_SP) {
-        this.Ma_SP = Ma_SP;
+    public void setMaSP(int MaSP) {
+        this.MaSP = MaSP;
     }
 
-    public int getSo_Luong() {
-        return So_Luong;
+    public int getSoLuong() {
+        return soLuong;
     }
 
-    public void setSo_Luong(int So_Luong) {
-        this.So_Luong = So_Luong;
+    public void setSoLuong(int soLuong) {
+        this.soLuong = soLuong;
     }
 
-    public double getThanh_Tien() {
-        return Thanh_Tien;
+    public double getThanhTien() {
+        return thanhTien;
     }
 
-    public void setThanh_Tien(double Thanh_Tien) {
-        this.Thanh_Tien = Thanh_Tien;
+    public String getTenSP() {
+        return tenSP;
+    }
+
+    public void setTenSP(String tenSP) {
+        this.tenSP = tenSP;
+    }
+
+    public String getAnhSP() {
+        return anhSP;
+    }
+
+    public void setAnhSP(String anhSP) {
+        this.anhSP = anhSP;
+    }
+
+    public String getTenMau() {
+        return tenMau;
+    }
+
+    public void setTenMau(String tenMau) {
+        this.tenMau = tenMau;
+    }
+
+    public String getAnhMau() {
+        return anhMau;
+    }
+
+    public void setAnhMau(String anhMau) {
+        this.anhMau = anhMau;
+    }
+
+   
+
+    public void setThanhTien(double thanhTien) {
+        this.thanhTien = thanhTien;
     }
     
 }

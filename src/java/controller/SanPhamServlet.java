@@ -1,102 +1,69 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller;
 
 import dao.SanPhamDAO;
 import jakarta.servlet.RequestDispatcher;
-import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 import model.SanPham;
 
-/**
- *
- * @author Asus TUF
- */
 @WebServlet(name = "SanPhamServlet", urlPatterns = {"/shop"})
 public class SanPhamServlet extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet SanPhamServlet</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet SanPhamServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
+    private static final int LIMIT = 6; // số sản phẩm mỗi trang
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-   @Override
-protected void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-    SanPhamDAO dao = new SanPhamDAO();
-    List<SanPham> list = dao.getAll();
-
-    System.out.println("🧾 [SanPhamServlet] Số sản phẩm lấy được: " + list.size());
-    for (SanPham sp : list) {
-        System.out.println(" - " + sp.getTenSp() + " (" + sp.getGia() + ")");
-    }
-
-    request.setAttribute("dsXe", list);
-
-    RequestDispatcher rd = request.getRequestDispatcher("shop.jsp");
-    rd.forward(request, response);
-}
-
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+
+        // ===============================
+        // ⚙️ LẤY TRANG HIỆN TẠI TỪ PARAM
+        // ===============================
+        int page = 1;
+        String pageParam = request.getParameter("page");
+        if (pageParam != null) {
+            try {
+                page = Integer.parseInt(pageParam);
+                if (page < 1) page = 1;
+            } catch (NumberFormatException e) {
+                page = 1;
+            }
+        }
+
+        // ===============================
+        // 📦 LẤY DỮ LIỆU TỪ DAO
+        // ===============================
+        SanPhamDAO dao = new SanPhamDAO();
+        int totalSanPham = dao.countSanPham();
+
+        // Tính tổng số trang
+        int totalPages = (int) Math.ceil((double) totalSanPham / LIMIT);
+        if (totalPages == 0) totalPages = 1;
+        if (page > totalPages) page = totalPages; // tránh lỗi vượt trang
+
+        // Lấy danh sách sản phẩm trang hiện tại
+        List<SanPham> dsXe = dao.getSanPhamByPage(page, LIMIT);
+
+        // ===============================
+        // 📤 GỬI DỮ LIỆU SANG JSP
+        // ===============================
+        request.setAttribute("dsXe", dsXe);
+        request.setAttribute("page", page);
+        request.setAttribute("totalPages", totalPages);
+
+        // ===============================
+        // 🔁 CHUYỂN HƯỚNG TỚI shop.jsp
+        // ===============================
+        RequestDispatcher rd = request.getRequestDispatcher("shop.jsp");
+        rd.forward(request, response);
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
+        return "Servlet hiển thị danh sách sản phẩm có phân trang";
+    }
 }

@@ -4,13 +4,13 @@
     Author     : Asus TUF
 --%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 
 <!DOCTYPE html>
 <html lang="en">
   <jsp:include page="header.jsp" />
- <%
-    out.println("Session ID hiện tại: " + session.getId() + "<br>");
-%>
  <section id="center" class="center_cart"
   style="
     background-image: url('image/rsz_vinfast_banner_1920x1280.jpg');
@@ -32,100 +32,142 @@
    </div>   
  </section>
  
- <section id="cart_page" class="cart pt-5 pb-5">
- <div class="container-xl">
-   <div class="cart_2 row">
+<section id="cart_page" class="cart pt-5 pb-5">
+ <div class="container-xl">
+   <div class="cart_2 row">
 	 <div class="col-md-6">
-	  <h5>Giỏ Hàng Của Tôi </h5>
+	  <h5>Giỏ Hàng Của Tôi </h5>
 	 </div>
 	 <div class="col-md-6">
-      
+      
 	 </div>
 	</div>
 	<div class="cart_3 row mt-3">
 <div class="col-md-8">
-    <div class="cart_3l">
-        <h6>SẢN PHẨM</h6>
-    </div>
+    <div class="cart_3l">
+        <h6>SẢN PHẨM</h6>
+    </div>
 
-    <c:if test="${empty cart}">
-        <p>Giỏ hàng trống.</p>
-    </c:if>
+    <c:if test="${empty cart}">
+        <p>Giỏ hàng trống.</p>
+    </c:if>
 
-    <c:forEach var="item" items="${cart}">
-        <div class="cart_3l1 mt-3 row ms-0 me-0 align-items-center product-item">
-            <div class="col-md-3 col-3">
-                <img src="${item.value.sanPham.hinhAnh}" class="img-fluid" alt="${item.value.sanPham.tenSp}">
-            </div>
-            <div class="col-md-9 col-9">
-                <h6 class="fw-bold mb-0">${item.value.sanPham.tenSp}</h6>
-                <h5 class="col_red mt-2 mb-2">
-                    <fmt:formatNumber value="${item.value.sanPham.gia}" type="number" groupingUsed="true"/> ₫
+  <c:if test="${not empty cart}">
+          <c:forEach var="entry" items="${cart}">
+            <c:set var="key" value="${entry.key}" />
+            <c:set var="item" value="${entry.value}" />
+
+            <div class="cart_3l1 row align-items-center product-item" data-price="${item.sanPham.gia}">
+              <div class="col-md-1 text-center">
+                <input type="checkbox" class="form-check-input product-check" checked>
+              </div>
+
+              <div class="col-md-3 text-center">
+                <img src="${item.colorImage != null ? item.colorImage : item.sanPham.hinhAnh}" class="img-fluid" alt="${item.sanPham.tenSp}">
+
+              </div>
+
+              <div class="col-md-8">
+                <h6 class="fw-bold mb-1">${item.sanPham.tenSp}</h6>
+                <p class="text-muted mb-1">
+                  <b>Màu xe:</b> 
+                  <span class="text-capitalize">${item.color != null ? item.color : 'Không chọn'}</span>
+                </p>
+                <h5 class="col_red mt-1 mb-3">
+                  <fmt:formatNumber value="${item.sanPham.gia}" type="number" groupingUsed="true"/> ₫
                 </h5>
+
                 <div class="d-flex align-items-center gap-2">
-                    <form action="cart" method="post">
-                        <input type="hidden" name="action" value="update">
-                        <input type="hidden" name="maSP" value="${item.value.sanPham.maSP}">
-                        <input type="number" name="qty_${item.value.sanPham.maSP}" class="form-control qty-input" min="1" value="${item.value.quantity}" style="width:80px;">
-                        <button type="submit" class="button px-4">Cập nhật</button>
-                    </form>
-                    <form action="cart" method="post">
-                        <input type="hidden" name="action" value="remove">
-                        <input type="hidden" name="maSP" value="${item.value.sanPham.maSP}">
-                        <button type="submit" class="button px-4">Xóa</button>
-                    </form>
+                  <!-- FORM CẬP NHẬT -->
+                  <form action="cart" method="post" class="d-flex align-items-center gap-2">
+                    <input type="hidden" name="action" value="update">
+                    <input type="hidden" name="maSP" value="${key}">
+                    <input type="number" name="qty_${key}" class="form-control qty-input"
+                           min="1" value="${item.quantity}" style="width:80px;">
+                   <!-- <button type="submit" class="button px-3">Cập nhật</button>-->
+                  </form>
+                   
+                   <!-- Nút thay đổi màu -->
+  <form action="ChiTietServlet" method="get">
+    <input type="hidden" name="MaSP" value="${item.sanPham.maSP}">
+    <input type="hidden" name="mode" value="edit"> <!-- thêm dòng này -->
+    <button type="submit" class="btn btn-warning px-3">
+        Thay đổi
+    </button>
+</form>
+                
+                 <!-- FORM XÓA -->
+                  <form action="cart" method="post">
+                    <input type="hidden" name="action" value="remove">
+                    <input type="hidden" name="maSP" value="${key}">
+                    <button type="submit" class="button px-3">Xóa</button>
+                  </form>
                 </div>
+              </div>
             </div>
+          </c:forEach>
+        </c:if>
+
+        <div class="mt-4">
+          <a href="shop" class="btn btn-outline-secondary">
+            <i class="fa fa-arrow-left me-2"></i> Tiếp tục mua sắm
+          </a>
         </div>
-    </c:forEach>
-</div>
+      </div>
 
-
- <div class="col-md-4">
-  <div class="cart_3r">
-   <h6 class="head_1">SUBTOTAL</h6>
-   <h3 id="subtotal" class="text-center col_red mt-3">$0.00</h3>
-   <hr>
-   <h6 class="font_14">Additional comments</h6>
-   <textarea class="form-control"></textarea>
-   <h6 class="text-center mt-3"><a class="button" href="checkout">Tiến Hành Thanh Toán</a></h6><br>
+      <!-- CỘT TỔNG TIỀN -->
+      <div class="col-md-4 mt-4 mt-md-0">
+        <div class="cart_3r">
+          <h6 class="head_1">Tạm tính</h6>
+          <h3 id="subtotal" class="text-center mt-3">0 ₫</h3>
+          <hr>
+          <h6 class="font_14 mb-2">Ghi chú thêm</h6>
+          <textarea class="form-control mb-3" rows="3"></textarea>
+          <div class="text-center">
+            <a class="button" href="checkout">Tiến hành thanh toán</a>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
- </div>
-</div>
 
-<!-- JS tính tổng -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const checkboxes = document.querySelectorAll('.product-check');
-  const subtotalElem = document.getElementById('subtotal');
+  <!-- SCRIPT TÍNH TỔNG TIỀN -->
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const subtotalElem = document.getElementById('subtotal');
+    const productItems = document.querySelectorAll('.product-item');
 
-  function formatMoney(num) {
-    return '$' + num.toLocaleString('en-US', {minimumFractionDigits: 2});
-  }
+    function formatVND(num) {
+      return num.toLocaleString('vi-VN') + ' ₫';
+    }
 
-  function updateSubtotal() {
-    let total = 0;
-    document.querySelectorAll('.product-item').forEach(item => {
-      const checked = item.querySelector('.product-check').checked;
-      const qty = parseInt(item.querySelector('.qty-input').value);
-      const price = parseFloat(item.dataset.price);
-      if (checked) total += qty * price;
+    function updateSubtotal() {
+      let total = 0;
+      productItems.forEach(item => {
+        const checkbox = item.querySelector('.product-check');
+        const qtyInput = item.querySelector('.qty-input');
+        const price = parseFloat(item.dataset.price || 0);
+        if (checkbox && checkbox.checked) {
+          const qty = parseInt(qtyInput.value || 0);
+          total += qty * price;
+        }
+      });
+      subtotalElem.textContent = formatVND(total);
+    }
+
+    productItems.forEach(item => {
+      const checkbox = item.querySelector('.product-check');
+      const qtyInput = item.querySelector('.qty-input');
+      if (checkbox) checkbox.addEventListener('change', updateSubtotal);
+      if (qtyInput) qtyInput.addEventListener('input', updateSubtotal);
     });
-    subtotalElem.textContent = formatMoney(total);
-  }
 
-  checkboxes.forEach(chk => chk.addEventListener('change', updateSubtotal));
-  document.querySelectorAll('.qty-input').forEach(input => input.addEventListener('input', updateSubtotal));
-});
-</script>
-
+    updateSubtotal();
+  });
+  </script>
 </section>
- 
-  <jsp:include page="footer.jsp" />
 
-		
-<script src="js/bootstrap.bundle.min.js"></script>
-<script src="js/theme.min.js"></script>
-
+<jsp:include page="footer.jsp" />
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

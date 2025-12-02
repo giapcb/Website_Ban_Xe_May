@@ -15,29 +15,35 @@ import jakarta.servlet.http.HttpSession;
 import model.NguoiDung;
 
 @WebServlet(name = "LoginServlet", urlPatterns = {"/LoginServlet"})
-
 public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String user = request.getParameter("email");
-String pass = request.getParameter("password");
+        String tenDN = request.getParameter("tenDangNhap");
+        String pass = request.getParameter("password");
 
         NguoiDungDAO dao = new NguoiDungDAO();
-        NguoiDung u = dao.login(user, pass);
+        NguoiDung u = dao.login(tenDN, pass);
 
-      if (u != null) {
-    HttpSession session = request.getSession();
-    session.setAttribute("user", u);
+        if (u != null) {
+            HttpSession session = request.getSession();
+            session.setAttribute("user", u);
 
-    // ✅ Đăng nhập thành công -> vào trang chính index.jsp
-    response.sendRedirect("index.jsp");
-} else {
-    request.setAttribute("error", "Tên đăng nhập hoặc mật khẩu không đúng!");
-    request.getRequestDispatcher("login.jsp").forward(request, response);
-}
+            String targetUrl = (String) session.getAttribute("targetUrl");
+            if (targetUrl != null) {
+            session.removeAttribute("targetUrl");
+            response.sendRedirect(request.getContextPath() + targetUrl);
+            } else {
+            response.sendRedirect(request.getContextPath() + "/index.jsp");
+            }
+             
 
+        } else {
+            request.setAttribute("error", "Tên đăng nhập hoặc mật khẩu không đúng!");
+            request.getRequestDispatcher("login.jsp").forward(request, response);
+        }
     }
 }
+
